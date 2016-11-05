@@ -1,5 +1,3 @@
-import unittest
-
 from nadine import test_cases
 
 
@@ -13,7 +11,3 @@ class TestAsserts(test_cases.NadineTestCase):
     def test_raises(self):
         with self.assertRaises(ValueError):
             raise ValueError('Test')
-
-
-if __name__ == '__main__':
-        unittest.main()

@@ -11,14 +11,14 @@ class NadineTestCase(TestCase):
     def __get_patch_variable_name_from_string(self, patch):
         return patch.split('.')[-1]
 
-    def __get_patch_variable_name_from_list_or_tuple(self, patch):
+    def __get_patch_variable_name_from_tuple(self, patch):
         return patch[1]
 
     def __get_patch_variable_name(self, patch):
         if isinstance(patch, str):
             return self.__get_patch_variable_name_from_string(patch)
         if isinstance(patch, tuple) and len(patch) > 1:
-            return self.__get_patch_variable_name_from_list_or_tuple(patch)
+            return self.__get_patch_variable_name_from_tuple(patch)
 
         raise TypeError(ERROR_MESSAGES['patch_type'].format(type(patch)))
 

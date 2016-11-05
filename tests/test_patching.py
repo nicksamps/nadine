@@ -34,6 +34,24 @@ class TestPatch(NadineTestCase):
         self.return_whatever.assert_called_once_with()
         self.stop_patches()
 
+    def test_patch_patches_function_with_tuple_custom_name(self):
+        self.patches = [
+            ('tests.test_patching.return_whatever', 'some_name')
+        ]
+        self.patch()
+
+        return_whatever()
+
+        self.some_name.assert_called_once_with()
+        self.stop_patches()
+
+    def test_patch_patches_function_with_tuple_missing_name(self):
+        self.patches = [
+            ('tests.test_patching.return_whatever', )
+        ]
+        with self.assertRaises(TypeError):
+            self.patch()
+
 
 class TestStopPatch(NadineTestCase):
     def test_called_with_patchers_not_defined(self):

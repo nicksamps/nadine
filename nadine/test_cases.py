@@ -3,13 +3,24 @@ from unittest import TestCase, mock
 
 ERROR_MESSAGES = {
     'patches_type': "'patches' must be a list",
-    'patch_type': "Invalid type ({}) used in 'patches'. String expected."
+    'patch_type': "Invalid element in patches list. String or tuple of two strings expected."
 }
 
 
 class NadineTestCase(TestCase):
-    def _NadineTestCase__get_patch_variable_name(self, patch):
+    def _NadineTestCase__get_patch_variable_name_from_string(self, patch):
         return patch.split('.')[-1]
+
+    def _NadineTestCase__get_patch_variable_name_from_list_or_tuple(self, patch):
+        return patch[1]
+
+    def _NadineTestCase__get_patch_variable_name(self, patch):
+        if isinstance(patch, str):
+            return self._NadineTestCase__get_patch_variable_name_from_string(patch)
+        if isinstance(patch, tuple) and len(patch) > 1:
+            return self._NadineTestCase__get_patch_variable_name_from_list_or_tuple(patch)
+
+        raise TypeError(ERROR_MESSAGES['patch_type'].format(type(patch)))
 
     def patch(self):
         if not hasattr(self, 'patches') or not self.patches:
@@ -20,11 +31,8 @@ class NadineTestCase(TestCase):
 
         self._NadineTestCase__patchers = []
         for patch in self.patches:
-            if not isinstance(patch, str):
-                raise TypeError(ERROR_MESSAGES['patch_type'].format(type(patch)))
-
-            patcher = mock.patch(patch)
             patch_name = self._NadineTestCase__get_patch_variable_name(patch)
+            patcher = mock.patch(patch[0]) if isinstance(patch, tuple) else mock.patch(patch)
             setattr(self, patch_name, patcher.start())
             self.__patchers.append(patcher)
 
@@ -32,5 +40,5 @@ class NadineTestCase(TestCase):
         if not hasattr(self, '_NadineTestCase__patchers'):
             return
 
-        for patch in self._NadineTestCase__patchers:
-            patch.stop()
+        for patcher in self._NadineTestCase__patchers:
+            patcher.stop()

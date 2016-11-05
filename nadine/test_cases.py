@@ -21,7 +21,7 @@ class NadineTestCase(TestCase):
         self._NadineTestCase__patchers = []
         for patch in self.patches:
             if not isinstance(patch, str):
-                raise TypeError(ERROR_MESSAGES['patch_type'])
+                raise TypeError(ERROR_MESSAGES['patch_type'].format(type(patch)))
 
             patcher = mock.patch(patch)
             patch_name = self._NadineTestCase__get_patch_variable_name(patch)

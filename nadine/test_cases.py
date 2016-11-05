@@ -8,17 +8,17 @@ ERROR_MESSAGES = {
 
 
 class NadineTestCase(TestCase):
-    def _NadineTestCase__get_patch_variable_name_from_string(self, patch):
+    def __get_patch_variable_name_from_string(self, patch):
         return patch.split('.')[-1]
 
-    def _NadineTestCase__get_patch_variable_name_from_list_or_tuple(self, patch):
+    def __get_patch_variable_name_from_list_or_tuple(self, patch):
         return patch[1]
 
-    def _NadineTestCase__get_patch_variable_name(self, patch):
+    def __get_patch_variable_name(self, patch):
         if isinstance(patch, str):
-            return self._NadineTestCase__get_patch_variable_name_from_string(patch)
+            return self.__get_patch_variable_name_from_string(patch)
         if isinstance(patch, tuple) and len(patch) > 1:
-            return self._NadineTestCase__get_patch_variable_name_from_list_or_tuple(patch)
+            return self.__get_patch_variable_name_from_list_or_tuple(patch)
 
         raise TypeError(ERROR_MESSAGES['patch_type'].format(type(patch)))
 
@@ -29,9 +29,9 @@ class NadineTestCase(TestCase):
         if not isinstance(self.patches, list):
             raise TypeError(ERROR_MESSAGES['patches_type'])
 
-        self._NadineTestCase__patchers = []
+        self.__patchers = []
         for patch in self.patches:
-            patch_name = self._NadineTestCase__get_patch_variable_name(patch)
+            patch_name = self.__get_patch_variable_name(patch)
             patcher = mock.patch(patch[0]) if isinstance(patch, tuple) else mock.patch(patch)
             setattr(self, patch_name, patcher.start())
             self.__patchers.append(patcher)
@@ -40,5 +40,5 @@ class NadineTestCase(TestCase):
         if not hasattr(self, '_NadineTestCase__patchers'):
             return
 
-        for patcher in self._NadineTestCase__patchers:
+        for patcher in self.__patchers:
             patcher.stop()

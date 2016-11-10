@@ -5,6 +5,10 @@ def return_whatever(whatever=None):
     return whatever
 
 
+def return_meh(meh=None):
+    return meh
+
+
 class TestPatch(NadineTestCase):
     def test_called_with_patches_not_defined(self):
         self.patch()
@@ -23,15 +27,18 @@ class TestPatch(NadineTestCase):
         with self.assertRaises(TypeError):
             self.patch()
 
-    def test_patch_patches_function(self):
+    def test_patch_patches_functions(self):
         self.patches = [
-            'tests.test_patching.return_whatever'
+            'tests.test_patching.return_whatever',
+            'tests.test_patching.return_meh'
         ]
         self.patch()
 
         return_whatever()
+        return_meh()
 
         self.return_whatever.assert_called_once_with()
+        self.return_meh.assert_called_once_with()
         self.stop_patches()
 
     def test_patch_patches_function_with_tuple_custom_name(self):

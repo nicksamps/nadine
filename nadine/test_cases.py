@@ -42,3 +42,17 @@ class NadineTestCase(TestCase):
 
         for patcher in self.__patchers:
             patcher.stop()
+
+    def setUp(self):
+        self.patch()
+
+    def tearDown(self):
+        self.stop_patches()
+
+
+class ManualNadineTestCase(NadineTestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass

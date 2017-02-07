@@ -1,4 +1,4 @@
-from nadine.test_cases import NadineTestCase
+from nadine import test_cases
 
 
 def return_whatever(whatever=None):
@@ -9,7 +9,10 @@ def return_meh(meh=None):
     return meh
 
 
-class TestPatch(NadineTestCase):
+class TestPatch(test_cases.NadineTestCase):
+    def setUp(self):
+        pass
+
     def test_called_with_patches_not_defined(self):
         self.patch()
 
@@ -39,7 +42,6 @@ class TestPatch(NadineTestCase):
 
         self.return_whatever.assert_called_once_with()
         self.return_meh.assert_called_once_with()
-        self.stop_patches()
 
     def test_patch_patches_function_with_tuple_custom_name(self):
         self.patches = [
@@ -50,7 +52,6 @@ class TestPatch(NadineTestCase):
         return_whatever()
 
         self.some_name.assert_called_once_with()
-        self.stop_patches()
 
     def test_patch_patches_function_with_tuple_missing_name(self):
         self.patches = [
@@ -60,7 +61,7 @@ class TestPatch(NadineTestCase):
             self.patch()
 
 
-class TestStopPatch(NadineTestCase):
+class TestStopPatch(test_cases.ManualNadineTestCase):
     def test_called_with_patchers_not_defined(self):
         self.stop_patches()
 
@@ -74,3 +75,20 @@ class TestStopPatch(NadineTestCase):
         self.stop_patches()
 
         self.assertEqual(return_whatever('whatever'), 'whatever')
+
+
+class TestSetUp(test_cases.NadineTestCase):
+    def setUp(self):
+        self.patches = [
+            'tests.test_patching.return_whatever',
+            'tests.test_patching.return_meh'
+        ]
+        super().setUp()
+
+    def test_setup_auto_patches(self):
+
+        return_whatever()
+        return_meh()
+
+        self.return_whatever.assert_called_once_with()
+        self.return_meh.assert_called_once_with()
